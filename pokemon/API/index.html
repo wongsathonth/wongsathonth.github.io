@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #1a189f;
+            background-color: #419464;
+        }
+
+        #weather {
+            margin-top: 20px;
+            background-color: rgba(220, 178, 140, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .weather-information {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Weather App</h1>
+    <form id="weatherForm">
+        <input type="text" id="city" name="city" placeholder="Enter city name" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <div class="weather-information" id="weather"></div>
+    <script>
+        document.getElementById('weatherForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const city = document.getElementById('city').value;
+            const apiKey = '37d0049d34a02624205f22c7cfb97523';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherDiv = document.getElementById('weather');
+                    if (data.cod === 200) {
+                        const temp = data.main.temp;
+                        const humidity = data.main.humidity;
+                        const windSpeed = data.wind.speed;
+
+                        weatherDiv.innerHTML = `
+                            <h2>Weather in ${data.name}</h2>
+                            <p>Temperature: ${temp} °C</p>
+                            <p>Humidity: ${humidity} %</p>
+                            <p>Wind Speed: ${windSpeed} m/s</p>
+                        `;
+                        weatherDiv.style.visibility = 'visible'; // Make the weather information visible
+                    } else {
+                        weatherDiv.innerHTML = `<p>City not found. Please try again.</p>`;
+                        weatherDiv.style.visibility = 'visible'; // Make the error message visible
+                    }
+                })
+                .catch(error => {
+                    const weatherDiv = document.getElementById('weather');
+                    weatherDiv.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
+                    weatherDiv.style.visibility = 'visible'; // Make the error message visible
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
